@@ -1,8 +1,8 @@
-import { View, Image, Alert, TouchableOpacity } from "react-native";
-import React, { useState, useEffect } from "react";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { TopBookings, TopInfo, TopTrips } from "../screens";
-import { COLORS, SIZES } from "../constants/theme";
+import { View, Image, Alert, TouchableOpacity } from "react-native"
+import React, { useState, useEffect } from "react"
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs"
+import { TopBookings, TopInfo, TopTrips } from "../screens"
+import { COLORS, SIZES } from "../constants/theme"
 import {
   AppBar,
   AssetImage,
@@ -10,77 +10,79 @@ import {
   NetworkImage,
   ReusableBtn,
   ReusableText,
-} from "../components";
-import styles from "./topTab.style";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
-const Tab = createMaterialTopTabNavigator();
+} from "../components"
+import styles from "./topTab.style"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import axios from "axios"
+const Tab = createMaterialTopTabNavigator()
 
 const TopTab = ({ navigation }) => {
-  const [userData, setUserData] = useState(null);
-  const [userLogin, setUserLogin] = useState(false);
+  const [userData, setUserData] = useState(null)
+  const [userLogin, setUserLogin] = useState(false)
 
   useEffect(() => {
-    checkExistingUser();
-  }, []);
+    checkExistingUser()
+  }, [])
 
   const checkExistingUser = async () => {
-    const id = await AsyncStorage.getItem("id");
-    const token = await AsyncStorage.getItem("token");
-    const userId = JSON.parse(id);
-    const accessToken = JSON.parse(token);
+    const id = await AsyncStorage.getItem("id")
+    const token = await AsyncStorage.getItem("token")
+    const userId = JSON.parse(id)
+    const accessToken = JSON.parse(token)
 
     try {
       if (userId !== null) {
-
         try {
           const response = await axios.get(
-            'https://travelappbackend-production.up.railway.app/api/users',
+            "https://travelappbackend-production.up.railway.app/api/users",
             {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
               },
             }
-          );
-          
-          if(response.status === 200){
-            setUserData(response.data)
-            if(userId === response.data._id){
-              setUserLogin(true);
-              setUserData(response.data)
-            }else{
-              Alert.alert("Incorrect Account ", "Please login with your own account ", [
-                {
-                  text: "Cancel",
-                  onPress: () => {},
-                },
-                {
-                  text: "Continue",
-                  onPress: () => navigation.navigate('AuthTop'),
-                },
-                { defaultIndex: 1 },
-              ]);
-            }
+          )
 
+          if (response.status === 200) {
+            setUserData(response.data)
+            if (userId === response.data._id) {
+              setUserLogin(true)
+              setUserData(response.data)
+            } else {
+              Alert.alert(
+                "Incorrect Account ",
+                "Please login with your own account ",
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => {},
+                  },
+                  {
+                    text: "Continue",
+                    onPress: () => navigation.navigate("AuthTop"),
+                  },
+                  { defaultIndex: 1 },
+                ]
+              )
+            }
           }
         } catch (error) {
-          console.log("Failed to get products", error);
+          console.log("Failed to get products", error)
         }
       } else {
       }
     } catch (error) {
-      console.log("Error retrieving the data:", error);
+      console.log("Error retrieving the data:", error)
     }
-  };
+  }
 
   const userLogout = async () => {
     try {
-      await AsyncStorage.multiRemove(["token", "id"]);
-      navigation.replace("Bottom");
+      await AsyncStorage.multiRemove(["token", "id"])
+      navigation.replace("Bottom")
     } catch (error) {
-      console.log("Error loggin out the user:", error);
+      console.log("Error loggin out the user:", error)
     }
-  };
+  }
 
   if (userLogin === false) {
     return (
@@ -114,18 +116,19 @@ const TopTab = ({ navigation }) => {
           </View>
         </View>
       </View>
-    );
+    )
   }
 
   return (
     <View style={{ flex: 1 }}>
       <View style={{ backgroundColor: COLORS.lightWhite }}>
         <View>
-        <AssetImage 
-        data={require('../assets/images/travel.jpg')}
-        width={'100%'}
-        height={300}
-        mode={"cover"} />
+          <AssetImage
+            data={require("../assets/images/travel.jpg")}
+            width={"100%"}
+            height={300}
+            mode={"cover"}
+          />
 
           <AppBar
             top={40}
@@ -135,7 +138,7 @@ const TopTab = ({ navigation }) => {
             icon={"logout"}
             color1={COLORS.white}
             onPress1={() => {
-              userLogout();
+              userLogout()
             }}
           />
 
@@ -151,7 +154,7 @@ const TopTab = ({ navigation }) => {
 
             <View style={{ alignItems: "center" }}>
               <ReusableText
-                text={userData ? userData.username: "Could not load you name"}
+                text={userData ? userData.username : "Could not load you name"}
                 family={"medium"}
                 size={SIZES.medium}
                 color={COLORS.lightWhite}
@@ -163,7 +166,7 @@ const TopTab = ({ navigation }) => {
             <View style={styles.name}>
               <View style={{ alignItems: "center" }}>
                 <ReusableText
-                  text={userData ? userData.email:  "gfadghasdfh@gmail.com"}
+                  text={userData ? userData.email : "gfadghasdfh@gmail.com"}
                   family={"medium"}
                   size={SIZES.medium}
                   color={COLORS.white}
@@ -179,7 +182,7 @@ const TopTab = ({ navigation }) => {
         <Tab.Screen name="Info" component={TopInfo} />
       </Tab.Navigator>
     </View>
-  );
-};
+  )
+}
 
-export default TopTab;
+export default TopTab
